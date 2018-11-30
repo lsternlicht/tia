@@ -138,10 +138,10 @@ class FigureHelper(object):
         self.dpi = dpi or 100
 
     def keys(self):
-        return list(self.fnmap.keys())
+        return self.fnmap.keys()
 
     def next_ax(self):
-        self.ax = next(self.axiter)
+        self.ax = self.axiter.next()
         return self.ax
 
     def __getitem__(self, item):
