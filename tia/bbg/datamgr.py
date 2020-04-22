@@ -356,7 +356,7 @@ class CachedDataManager(DataManager):
         cached = self._cache_get_attribute(sids, flds, **overrides)
         if not cached:  # build get
             df = self.dm.get_attributes(sids, flds, **overrides)
-            [self._cache_update_attribute(sid, df.ix[sid:sid], **overrides) for sid in sids]
+            [self._cache_update_attribute(sid, df.loc[sid:sid], **overrides) for sid in sids]
             return df
         else:
             # Retrieve all missing and merge with existing cache
@@ -413,7 +413,7 @@ class CachedDataManager(DataManager):
                                                                                            cache_start))
                     previous = self.dm.get_historical(sid, cache_columns, start, cache_start)
                     # Easy way to ensure we don't dup data
-                    previous = previous.ix[previous.index < cache_start]
+                    previous = previous.loc[previous.index < cache_start]
                     if len(previous.index) > 0:
                         cached_frame = pd.concat([previous, cached_frame])
                         dirty = 1
@@ -422,7 +422,7 @@ class CachedDataManager(DataManager):
                     self.logger.info('%s request for %s is more recent than data in cache %s' % (sid, ccols, cache_end))
                     post = self.dm.get_historical(sid, cache_columns, cache_end, end)
                     # Easy way to ensure we don't dup data
-                    post = post.ix[post.index > cache_end]
+                    post = post.loc[post.index > cache_end]
                     if len(post.index) > 0:
                         cached_frame = pd.concat([cached_frame, post])
                         dirty = 1
@@ -441,7 +441,7 @@ class CachedDataManager(DataManager):
                     dirty = 1
 
                 dirty and self.storage.set(key, cached_frame, start=min(cache_start, start), end=max(cache_end, end))
-                frames[sid] = cached_frame.ix[start:end, flds]
+                frames[sid] = cached_frame.loc[start:end, flds]
 
         if is_str:
             return frames[sids[0]]

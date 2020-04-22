@@ -755,7 +755,7 @@ class TableFormatter(object):
             values.iloc[:nhdrs - 1, :nidxs] = ''
 
         formatted_values = pd.DataFrame(np.empty((nhdrs + nrows, nidxs + ncols), dtype=object))
-        formatted_values.ix[:, :] = values.copy().values
+        formatted_values.loc[:, :] = values.copy().values
         self.actual_values = values
         self.formatted_values = formatted_values
         self.named_regions = {
@@ -848,7 +848,7 @@ class TableFormatter(object):
                     if len(arr) != len(self.formatted_values.index):
                         raise ValueError(
                             '%s: expected %s rows but got %s' % (attr, len(arr), len(self.formatted_values.index)))
-                self.rowattrs.ix[:, attr] = arr
+                self.rowattrs.loc[:, attr] = arr
         return self
 
     def set_col_widths(self, pcts=None, amts=None, maxs=None, mins=None):
@@ -865,7 +865,7 @@ class TableFormatter(object):
                     if len(arr) != len(self.formatted_values.columns):
                         raise ValueError(
                             '%s: expected %s cols but got %s' % (attr, len(arr), len(self.formatted_values.columns)))
-                self.colattrs.ix[:, attr] = arr
+                self.colattrs.loc[:, attr] = arr
         return self
 
     def _resolve_dims(self, available, attrs):

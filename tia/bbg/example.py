@@ -21,7 +21,7 @@ if __name__ == '__main__':
     rframe = response.as_frame()
     print(rframe.columns)
     # show frame within a frame
-    print(rframe.ix[0, 'fwd_curve'].tail())
+    print(rframe.loc[0, 'fwd_curve'].tail())
 
     banner('ReferenceDataRequest: multi security, multi-field, bad field')
     response = LocalTerminal.get_reference_data(['eurusd curncy', 'msft us equity'], ['px_last', 'fwd_curve'],

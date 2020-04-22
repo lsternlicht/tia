@@ -114,8 +114,8 @@ class TestAnalysis(unittest.TestCase):
         pp = PortfolioPricer(1., closing_pxs=pd.Series(10., index=[t1.ts]).asfreq('B', normalize=1))
         port = SingleAssetPortfolio(pp, [t1, t2, t3, t4])
         # make sure long/short is correct
-        pdtest.assert_frame_equal(port.positions.frame.ix[1:1], port.long.positions.frame)
-        pdtest.assert_frame_equal(port.positions.frame.ix[2:2], port.short.positions.frame)
+        pdtest.assert_frame_equal(port.positions.frame.loc[1:1], port.long.positions.frame)
+        pdtest.assert_frame_equal(port.positions.frame.loc[2:2], port.short.positions.frame)
         # some sanity checks
         pdtest.assert_series_equal(port.pl.dly, port.long.pl.dly + port.short.pl.dly)
         pdtest.assert_series_equal(port.pl.ltd_dly, port.long.pl.ltd_dly + port.short.pl.ltd_dly)

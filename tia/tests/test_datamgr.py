@@ -31,11 +31,11 @@ class MockDataManager(object):
         sids = [sids] if isinstance(sids, str) else sids
         flds = [flds] if isinstance(flds, str) else flds
         self.access_cnt += 1
-        return self.df.ix[sids, flds]
+        return self.df.loc[sids, flds]
 
     def get_historical(self, sid, flds, start, end, **overrides):
         self.access_cnt += 1
-        return self.hist[sid].ix[start:end, flds]
+        return self.hist[sid].loc[start:end, flds]
 
 
 class TestDataManager(unittest.TestCase):
@@ -53,15 +53,15 @@ class TestDataManager(unittest.TestCase):
         sids = ['SID3', 'SID1', 'SID2']
         flds = ['FLDB', 'FLDA', 'FLDC']
         res = cdm.get_attributes(sids, flds)
-        pdtest.assert_frame_equal(res, self.dm.df.ix[sids, flds])
+        pdtest.assert_frame_equal(res, self.dm.df.loc[sids, flds])
         self.assertEqual(1, self.dm.access_cnt)
         # miss the cache by setting an override which is none - this should not effect anything
         res = cdm.get_attributes(sids, flds, fake=None)
-        pdtest.assert_frame_equal(res, self.dm.df.ix[sids, flds])
+        pdtest.assert_frame_equal(res, self.dm.df.loc[sids, flds])
         self.assertEqual(1, self.dm.access_cnt)
         # REAL cache miss
         res = cdm.get_attributes(sids, flds, fake='value')
-        pdtest.assert_frame_equal(res, self.dm.df.ix[sids, flds])
+        pdtest.assert_frame_equal(res, self.dm.df.loc[sids, flds])
         self.assertEqual(2, self.dm.access_cnt)
 
     def test_memory_cache(self):
@@ -77,7 +77,7 @@ class TestDataManager(unittest.TestCase):
         # get a single field for each sid
         for i, (sid, fld) in enumerate([('SID1', 'FLDA'), ('SID2', 'FLDB'), ('SID3', 'FLDC')]):
             res = cdm.get_attributes(sid, fld)
-            pdtest.assert_frame_equal(res, self.dm.df.ix[sid:sid, fld:fld])
+            pdtest.assert_frame_equal(res, self.dm.df.loc[sid:sid, fld:fld])
             self.assertEqual(i+1, self.dm.access_cnt)
         # now force cache to make multiple requests to build entire frame
         sids = ['SID1', 'SID2', 'SID3']
@@ -92,7 +92,7 @@ class TestDataManager(unittest.TestCase):
         cdm = CachedDataManager(self.dm, storage, pd.datetime.now())
         start, end = pd.to_datetime('1/2/2014'), pd.to_datetime('1/3/2014')
         res = cdm.get_historical('SID1', 'FLDA', start, end)
-        pdtest.assert_frame_equal(res, self.dm.hist['SID1'].ix[start:end, ['FLDA']])
+        pdtest.assert_frame_equal(res, self.dm.hist['SID1'].loc[start:end, ['FLDA']])
         self.assertEqual(1, self.dm.access_cnt)
 
         start, end = pd.to_datetime('1/1/2014'), pd.to_datetime('1/4/2014')
@@ -141,7 +141,7 @@ class TestDataManager(unittest.TestCase):
         cdm = CachedDataManager(self.dm, storage, pd.datetime.now())
         start, end = as_date('12/31/2013'), as_date('1/3/2014')
         res = cdm.get_historical('SID1', 'FLDA', start, end)
-        pdtest.assert_frame_equal(res, self.dm.hist['SID1'].ix[start:end, ['FLDA']])
+        pdtest.assert_frame_equal(res, self.dm.hist['SID1'].loc[start:end, ['FLDA']])
         self.assertEqual(1, self.dm.access_cnt)
 
         res = cdm.get_historical('SID1', 'FLDA', start, end)
